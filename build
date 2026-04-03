@@ -123,8 +123,17 @@ fi
 if [ ! -d "$TOOLKIT/pkgscripts-ng" ]; then
     echo "::group::Prepare build environment" >&2
     git clone https://github.com/SynologyOpenSource/pkgscripts-ng $TOOLKIT/pkgscripts-ng
-    sed -i 's/urllib.request.urlopen(url)/urllib.request.urlopen(url, timeout=30)/' \
+    #sed -i 's/urllib.request.urlopen(url)/urllib.request.urlopen(url, timeout=30)/' \
+    #    $TOOLKIT/pkgscripts-ng/include/python/pkgdeploy.py
+
+    sed -i \
+        "s|ToolkitServer = 'https://dataupdate7.synology.com/toolchain/v1/get_download_list?identify=toolkit'|ToolkitServer = 'https://dataautoupdate7.synology.com/toolchain/v1/get_download_list/toolkit'|" \
         $TOOLKIT/pkgscripts-ng/include/python/pkgdeploy.py
+
+    sed -i \
+        "s|return '%s\&version=%s\&platform=%s' % (ToolkitServer, self.dsm_ver, platform)|return '%s/%s/%s' % (ToolkitServer, self.dsm_ver, platform)|" \
+        $TOOLKIT/pkgscripts-ng/include/python/pkgdeploy.py
+
     echo "::endgroup::" >&2
 fi
 
