@@ -123,6 +123,8 @@ fi
 if [ ! -d "$TOOLKIT/pkgscripts-ng" ]; then
     echo "::group::Prepare build environment" >&2
     git clone https://github.com/SynologyOpenSource/pkgscripts-ng $TOOLKIT/pkgscripts-ng
+    sed -i 's/urllib.request.urlopen(url)/urllib.request.urlopen(url, timeout=30)/' \
+        $TOOLKIT/pkgscripts-ng/include/python/pkgdeploy.py
     echo "::endgroup::" >&2
 fi
 
