@@ -122,18 +122,8 @@ fi
 # https://help.synology.com/developer-guide/getting_started/prepare_environment.html
 if [ ! -d "$TOOLKIT/pkgscripts-ng" ]; then
     echo "::group::Prepare build environment" >&2
+
     git clone https://github.com/SynologyOpenSource/pkgscripts-ng $TOOLKIT/pkgscripts-ng
-    #sed -i 's/urllib.request.urlopen(url)/urllib.request.urlopen(url, timeout=30)/' \
-    #    $TOOLKIT/pkgscripts-ng/include/python/pkgdeploy.py
-
-    sed -i \
-        "s|ToolkitServer = 'https://dataupdate7.synology.com/toolchain/v1/get_download_list?identify=toolkit'|ToolkitServer = 'https://dataautoupdate7.synology.com/toolchain/v1/get_download_list/toolkit'|" \
-        $TOOLKIT/pkgscripts-ng/include/python/pkgdeploy.py
-
-    sed -i \
-        "s|return '%s\&version=%s\&platform=%s' % (ToolkitServer, self.dsm_ver, platform)|return '%s/%s/%s' % (ToolkitServer, self.dsm_ver, platform)|" \
-        $TOOLKIT/pkgscripts-ng/include/python/pkgdeploy.py
-
     echo "::endgroup::" >&2
 fi
 
@@ -152,9 +142,19 @@ if [ "$ARCH" != "noarch" ]; then
     # https://help.synology.com/developer-guide/getting_started/prepare_environment.html
     if [ ! -d "$TOOLKIT/build_env/ds.$ARCH-$DSM" ] || [ ! -f "$TOOLKIT/build_env/ds.$ARCH-$DSM/PkgVersion" ]; then
         mkdir -p $TOOLKIT/build_env
+        mkdir -p $TOOLKIT/toolkit_tarballs
         cd $TOOLKIT/pkgscripts-ng/
         git checkout DSM$DSM || exit 1
-        ./EnvDeploy --version $DSM -p $ARCH >&2 || exit 1
+        # Pre-download toolkit files from cache to avoid Synology server issues
+        BASE_URL="https://github.com/007revad/synology-toolkit-cache/releases/download/7.0"
+        echo "Downloading toolkit files from cache..." >&2
+        curl -L --progress-bar -o $TOOLKIT/toolkit_tarballs/base_env-$DSM.txz \
+            "$BASE_URL/base_env-$DSM.txz" >&2 || exit 1
+        curl -L --progress-bar -o $TOOLKIT/toolkit_tarballs/ds.$ARCH-$DSM.dev.txz \
+            "$BASE_URL/ds.$ARCH-$DSM.dev.txz" >&2 || exit 1
+        curl -L --progress-bar -o $TOOLKIT/toolkit_tarballs/ds.$ARCH-$DSM.env.txz \
+            "$BASE_URL/ds.$ARCH-$DSM.env.txz" >&2 || exit 1
+        ./EnvDeploy --version $DSM -p $ARCH --no-download >&2 || exit 1
         cd -
     else
         echo "Chroot environment for $ARCH-$DSM already exists" >&2
