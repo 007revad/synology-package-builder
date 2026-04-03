@@ -117,7 +117,8 @@ create_info() {
 	local package=$(jq -r '.name//$default' $json --arg default "no-name")
 
 	# Load name
-	build_info 'package' $(toCamelCase ${package##*/})
+	#build_info 'package' $(toCamelCase ${package##*/})
+	build_info 'package' "$package"
 
 	# Load version under 'x.y.z-pre+build' format.
 	# Remove any leading letters
