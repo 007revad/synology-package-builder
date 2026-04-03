@@ -3,7 +3,7 @@ FROM ubuntu
 
 # Install for ubuntu
 RUN apt-get update && \
-    apt-get install -qy python3 python3-pip git cifs-utils jq rsync tree 
+    apt-get install -qy python3 python3-pip git cifs-utils jq rsync tree curl
 
 # Copies build scripts to the root of the container
 COPY build* /
