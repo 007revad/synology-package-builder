@@ -191,6 +191,9 @@ create_info() {
 	#echo dsmappname=$(jq -r 'if .dsmConfig.dsmappname | type == "array" then .dsmConfig.dsmappname | join(" ") else null end // if .dsmConfig.appname | type == "array" then  .dsmConfig.appname | join(" ") else null end // $default' $json --arg default ${package##*/})
 	#echo dsmapppage=$(jq -r '.dsmConfig.dsmapppage // .dsmConfig.apppage // ""' $json)
 	#echo dsmapplaunchname=\'$(jq -r '.dsmConfig.dsmapplaunchname // .dsmConfig.applaunchname // $default' $json --arg default ${package##*/})\'
+    build_info 'dsmappname' $json '.dsmappname // empty'
+    build_info 'instuninst_restart_services' $json '.instuninst_restart_services // empty'
+    build_info 'startstop_restart_services' $json '.startstop_restart_services // empty'
 
 	# Load package dependencies
 	echo install_dep_packages=\"$(
