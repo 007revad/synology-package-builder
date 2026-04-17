@@ -88,8 +88,11 @@ create_tgz() {
 	# Copy configuration files
 	install_files conf
 
-	# Copy bin files
+	# Copy bin files if present
 	install_files bin
+
+	# Copy sbin files if present
+	install_files sbin
 
 	# Copy lib files if present
 	install_files lib
