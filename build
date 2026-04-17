@@ -152,7 +152,8 @@ if [ "$ARCH" != "noarch" ]; then
         cd $TOOLKIT/pkgscripts-ng/
         git checkout DSM$DSM || exit 1
         # Pre-download toolkit files from cache to avoid Synology server issues
-        BASE_URL="https://github.com/007revad/synology-toolkit-cache/releases/download/7.0"
+        #BASE_URL="https://github.com/007revad/synology-toolkit-cache/releases/download/7.0"
+        BASE_URL="https://github.com/007revad/synology-toolkit-cache/releases/download/$DSM"
         echo "Downloading toolkit files from cache..." >&2
         curl -L --progress-bar -o $TOOLKIT/toolkit_tarballs/base_env-$DSM.txz \
             "$BASE_URL/base_env-$DSM.txz" >&2 || exit 1
