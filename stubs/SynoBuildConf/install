@@ -91,6 +91,9 @@ create_tgz() {
 	# Copy bin files
 	install_files bin
 
+	# Copy lib files if present
+	install_files lib
+
 	# Create package.tgz from install directory
 	pkg_make_package ${INST_DIR} ${PKG_DIR}
 }
