@@ -161,6 +161,20 @@ if [ "$ARCH" != "noarch" ]; then
             "$BASE_URL/ds.$ARCH-$DSM.dev.txz" >&2 || exit 1
         curl -L --progress-bar -o $TOOLKIT/toolkit_tarballs/ds.$ARCH-$DSM.env.txz \
             "$BASE_URL/ds.$ARCH-$DSM.env.txz" >&2 || exit 1
+
+        echo "Validating toolkit tarballs..." >&2
+        for txz in \
+            $TOOLKIT/toolkit_tarballs/base_env-$DSM.txz \
+            $TOOLKIT/toolkit_tarballs/ds.$ARCH-$DSM.dev.txz \
+            $TOOLKIT/toolkit_tarballs/ds.$ARCH-$DSM.env.txz; do
+            if ! xz --test "$txz" 2>/dev/null; then
+                echo "ERROR: $txz is corrupt or not a valid XZ archive" >&2
+                rm -f "$txz"
+                exit 1
+            fi
+        done
+        echo "Toolkit tarballs OK" >&2
+
         ./EnvDeploy --version $DSM -p $ARCH --no-download >&2 || exit 1
         cd -
     else
