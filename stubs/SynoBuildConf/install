@@ -176,7 +176,7 @@ create_info() {
 
 	# Load display names for different languages
 	for l in $LANGS; do
-		build_info "displayname_$l" $json ".synology.description_$l // empty"
+		build_info "displayname_$l" $json ".synology.displayname_$l // empty"
 	done
 
 	# Mark as third-party package
