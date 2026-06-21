@@ -195,12 +195,13 @@ create_info() {
 	#echo adminurl=$(jq -r '.dsmConfig.adminurl  // .config.admin.url // ""' $json)
 	#echo adminprotocol=$(jq -r '.dsmConfig.adminprotocol // .config.admin.protocol // ""' $json)
 	#
-	build_info 'dsmuidir' $json '.synology.dsmuidir // empty'
+    build_info 'dsmuidir' $json '.synology.dsmuidir // .dsmuidir // empty'
 	#echo dsmappname=$(jq -r 'if .dsmConfig.dsmappname | type == "array" then .dsmConfig.dsmappname | join(" ") else null end // if .dsmConfig.appname | type == "array" then  .dsmConfig.appname | join(" ") else null end // $default' $json --arg default ${package##*/})
 	#echo dsmapppage=$(jq -r '.dsmConfig.dsmapppage // .dsmConfig.apppage // ""' $json)
 	#echo dsmapplaunchname=\'$(jq -r '.dsmConfig.dsmapplaunchname // .dsmConfig.applaunchname // $default' $json --arg default ${package##*/})\'
 	build_info 'dsmappname' $json '.synology.dsmappname // .dsmappname // empty'
-	build_info 'ctl_stop' $json '.synology.ctl_stop // empty'
+	build_info 'ctl_stop' $json '.synology.ctl_stop // .ctl_stop // empty'
+    build_info 'ctl_uninstall' $json '.synology.ctl_uninstall // .ctl_uninstall // empty'
 	build_info 'instuninst_restart_services' $json '.instuninst_restart_services // empty'
 	build_info 'startstop_restart_services' $json '.startstop_restart_services // empty'
 
