@@ -17,7 +17,7 @@ DEFAULT_NAME="007revad"
 DEFAULT_GITHUB="https://www.github.com/007revad/"
 DEFAULT_DESCRIPTION=""
 
-LANGS="enu cht chs krn ger fre ita spn jpn dan nor sve nld rus plk ptb ptg hun trk csy"
+LANGS="chs cht csy dan enu fre ger hun ita jpn krn nld nor plk ptb ptg rus spn sve tha trk"
 
 # Load Synology's SPK packaging utility functions
 source /pkgscripts/include/pkg_util.sh
