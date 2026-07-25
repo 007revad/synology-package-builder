@@ -160,6 +160,14 @@ create_info() {
 		build_info "description_$l" $json ".synology.description_$l // empty"
 	done
 
+	# Load changelog
+	build_info 'changelog' $json '.changelog // empty'
+
+	# Display changelog in different languages
+	for l in $LANGS; do
+		build_info "changelog_$l" $json ".synology.changelog_$l // empty"
+	done
+
 	# Load maintainer $DEFAULT_NAME and maintainer URL $DEFAULT_URL
 	build_info 'maintainer' $json '.synology.maintainer // .author.name // $default' "$DEFAULT_NAME"
 	build_info 'maintainer_url' $json '.synology.maintainer_url // .homepage // empty'
