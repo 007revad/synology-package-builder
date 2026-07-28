@@ -94,6 +94,12 @@ if ! command -v curl >/dev/null 2>&1; then
     sudo apt-get install -y curl
 fi
 
+# Ensure xz is installed
+if ! command -v xz >/dev/null 2>&1; then
+    sudo apt-get update
+    sudo apt-get install -y xz-utils
+fi
+
 # Ensure Build Stubs basename is "SynoBuildConf"
 if [ ! -d "$BLD_STUBS" ]; then
     echo "Build stubs folder $BLD_STUBS does not exist" >&2
