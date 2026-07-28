@@ -183,7 +183,7 @@ if [ "$ARCH" != "noarch" ]; then
         ls -l $TOOLKIT/toolkit_tarballs/ds.$ARCH-$DSM.env.txz >&2
         sha256sum $TOOLKIT/toolkit_tarballs/ds.$ARCH-$DSM.env.txz >&2
 
-        echo "Validating toolkit tarballs..." >&2
+       echo "Validating toolkit tarballs..." >&2
         for txz in \
             $TOOLKIT/toolkit_tarballs/base_env-$DSM.txz \
             $TOOLKIT/toolkit_tarballs/ds.$ARCH-$DSM.dev.txz \
@@ -193,8 +193,11 @@ if [ "$ARCH" != "noarch" ]; then
                 rm -f "$txz"
                 exit 1
             fi
-            if ! xz --test "$txz" 2>/dev/null; then
-                echo "ERROR: $txz is corrupt or not a valid XZ archive" >&2
+            echo "Testing $txz with xz..." >&2
+            xz --version >&2
+            free -h >&2 2>/dev/null || echo "free not available" >&2
+            if ! xz --test -v "$txz"; then
+                echo "ERROR: $txz is corrupt or not a valid XZ archive (xz exit code: $?)" >&2
                 rm -f "$txz"
                 exit 1
             fi
