@@ -154,13 +154,34 @@ if [ "$ARCH" != "noarch" ]; then
         # Pre-download toolkit files from cache to avoid Synology server issues
         #BASE_URL="https://github.com/007revad/synology-toolkit-cache/releases/download/7.0"
         BASE_URL="https://github.com/007revad/synology-toolkit-cache/releases/download/$DSM"
+
         echo "Downloading toolkit files from cache..." >&2
+        echo "Disk space before toolkit downloads:" >&2
+        df -h $TOOLKIT >&2
+
         curl -L --fail --progress-bar -o $TOOLKIT/toolkit_tarballs/base_env-$DSM.txz \
             "$BASE_URL/base_env-$DSM.txz" >&2 || exit 1
+        echo "Disk space after base_env download:" >&2
+        df -h $TOOLKIT >&2
+        echo "base_env-$DSM.txz size and sha256:" >&2
+        ls -l $TOOLKIT/toolkit_tarballs/base_env-$DSM.txz >&2
+        sha256sum $TOOLKIT/toolkit_tarballs/base_env-$DSM.txz >&2
+
         curl -L --fail --progress-bar -o $TOOLKIT/toolkit_tarballs/ds.$ARCH-$DSM.dev.txz \
             "$BASE_URL/ds.$ARCH-$DSM.dev.txz" >&2 || exit 1
+        echo "Disk space after dev download:" >&2
+        df -h $TOOLKIT >&2
+        echo "ds.$ARCH-$DSM.dev.txz size and sha256:" >&2
+        ls -l $TOOLKIT/toolkit_tarballs/ds.$ARCH-$DSM.dev.txz >&2
+        sha256sum $TOOLKIT/toolkit_tarballs/ds.$ARCH-$DSM.dev.txz >&2
+
         curl -L --fail --progress-bar -o $TOOLKIT/toolkit_tarballs/ds.$ARCH-$DSM.env.txz \
             "$BASE_URL/ds.$ARCH-$DSM.env.txz" >&2 || exit 1
+        echo "Disk space after env download:" >&2
+        df -h $TOOLKIT >&2
+        echo "ds.$ARCH-$DSM.env.txz size and sha256:" >&2
+        ls -l $TOOLKIT/toolkit_tarballs/ds.$ARCH-$DSM.env.txz >&2
+        sha256sum $TOOLKIT/toolkit_tarballs/ds.$ARCH-$DSM.env.txz >&2
 
         echo "Validating toolkit tarballs..." >&2
         for txz in \
