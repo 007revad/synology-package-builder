@@ -1,9 +1,9 @@
 # Docker file to start unbuntu with python3.6 in privileged mode
-FROM ubuntu
+FROM ubuntu:24.04
 
 # Install for ubuntu
 RUN apt-get update && \
-    apt-get install -qy python3 python3-pip git cifs-utils jq rsync tree curl
+    apt-get install -qy python3 python3-pip git cifs-utils jq rsync tree curl xz-utils
 
 # Copies build scripts to the root of the container
 COPY build* /
