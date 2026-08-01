@@ -180,6 +180,7 @@ create_info() {
 	build_info 'os_min_ver' $json '.synology.os_min_ver // if .os | type == "array" then .os[] | select(startswith("dsm:")) | sub("dsm:"; "") else $default end' 7.0-40337
 	build_info 'os_max_ver' $json '.synology.os_max_ver // empty'
 	build_info 'arch' $json '.synology.arch // if .cpu | type == "array" then .cpu[] | select(startswith("dsm:")) | sub("dsm:"; "") else $default end' $(pkg_get_platform_family)
+	build_info 'exclude_model' $json '.synology.exclude_model // empty'
 	build_info 'displayname' $json '.synology.displayname // $default' "$(toDisplay $package)"
 
 	# Load display names for different languages
@@ -190,10 +191,16 @@ create_info() {
 	# Mark as third-party package
 	build_info 'thirdparty' 'yes'
 
-	# Mark as beta if version contains a dash
-	case $(jq -r '.version // "0.0.0-noversion"' $json) in
-	*-*) build_info 'beta' 'true' ;;
-	*) build_info 'beta' 'false' ;;
+	# Mark as beta: explicit synology.beta wins, otherwise infer from a dash in the version
+	case $(jq -r '.synology.beta // empty' $json) in
+	yes | true) build_info 'beta' 'true' ;;
+	no | false) build_info 'beta' 'false' ;;
+	*)
+		case $(jq -r '.version // "0.0.0-noversion"' $json) in
+		*-*) build_info 'beta' 'true' ;;
+		*) build_info 'beta' 'false' ;;
+		esac
+		;;
 	esac
 
 	#echo model=\'$(jq -r 'if .dsmConfig | type == "array" then .dsmConfig.model | join(" ") else "" end ' $json)\'
