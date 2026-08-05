@@ -243,6 +243,7 @@ create_info() {
 		test -f $icon && echo "package_icon${size}=\"$(base64 -w 0 $icon)\""
 	done
 
+    build_info 'checksum' "$(md5sum "$PKG_DIR/package.tgz" | awk '{print $1}')"
 }
 
 # Create the final .spk package
