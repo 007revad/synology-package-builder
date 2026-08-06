@@ -15,3 +15,33 @@ case ${MakeClean} in
 esac
 
 make ${MAKE_FLAGS}
+
+#---------------------------------------------------------------------
+# Setuid helper(s): any *.c file under ./helper/ gets compiled with
+# this chroot's own gcc - EnvDeploy already put the correct
+# cross-compiler for $ARCH on PATH, so no cross flags are needed here.
+# Optional: packages with no ./helper/ are untouched by this block.
+#---------------------------------------------------------------------
+HELPER_DIR="./helper"
+TARGET_DIR="./target/bin/helper"
+
+if [ -d "$HELPER_DIR" ]; then
+    found=0
+    for src in "$HELPER_DIR"/*.c; do
+        test -f "$src" || continue
+        found=1
+
+        name=$(basename "$src" .c)
+        out="$TARGET_DIR/$name"
+
+        echo "→ Compiling $src -> $out ($ARCH)" >&2
+        mkdir -p "$TARGET_DIR"
+
+        gcc -O2 -static -Wall -Wextra -o "$out" "$src" || {
+            echo "ERROR: failed to compile $src" >&2
+            exit 1
+        }
+        chmod 0755 "$out"
+    done
+    [ "$found" -eq 1 ] || echo "→ $HELPER_DIR exists but contains no .c files, skipping" >&2
+fi
