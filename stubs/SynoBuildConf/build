@@ -38,7 +38,8 @@ if [ -d "$HELPER_DIR" ]; then
         mkdir -p "$TARGET_DIR"
 
         echo "→ searching for cross-gcc binaries:" >&2
-        find / -maxdepth 6 -iname '*gcc*' -type f 2>/dev/null >&2
+        find / -maxdepth 8 -iname '*gcc*' -type f
+        echo "→ find exit code: $?" >&2
 
         echo "→ gcc target: $(gcc -dumpmachine 2>&1)" >&2
         echo "→ gcc path: $(command -v gcc 2>&1)" >&2
