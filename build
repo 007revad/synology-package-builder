@@ -191,7 +191,7 @@ if [ "$ARCH" != "noarch" ]; then
         # pre-caching every platform ourselves doesn't scale as we add
         # more (no cache release to maintain per new arch).
         CACHE_URL="https://github.com/007revad/synology-toolkit-cache/releases/download/$DSM"
-        SYNOLOGY_URL="https://global.synologydownload.com/download/ToolChain/toolkit/$DSM"
+        SYNOLOGY_URL="https://global.synologydownload.com/download/ToolChain/toolkit/$DSM/$ARCH"
 
         echo "Downloading toolkit files from cache..." >&2
         echo "Disk space before toolkit downloads:" >&2
