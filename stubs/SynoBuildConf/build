@@ -37,7 +37,7 @@ if [ -d "$HELPER_DIR" ]; then
         echo "→ Compiling $src -> $out ($ARCH)" >&2
         mkdir -p "$TARGET_DIR"
 
-        gcc -O2 -static -Wall -Wextra -o "$out" "$src" || {
+        gcc -O2 -static -Wall -Wextra -std=gnu99 -o "$out" "$src" || {
             echo "ERROR: failed to compile $src" >&2
             exit 1
         }
