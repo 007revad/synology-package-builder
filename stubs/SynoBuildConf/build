@@ -37,17 +37,25 @@ if [ -d "$HELPER_DIR" ]; then
         echo "→ Compiling $src -> $out ($ARCH)" >&2
         mkdir -p "$TARGET_DIR"
 
-        echo "→ searching for cross-gcc binaries:" >&2
-        find / -maxdepth 8 -iname '*gcc*' -type f
-        echo "→ find exit code: $?" >&2
+        # Prefer a triplet-prefixed cross-compiler if this chroot has one
+        # (ARM platforms keep theirs under /usr/local/<triplet>/bin, off
+        # the default PATH); fall back to plain gcc for platforms - like
+        # kvmx64 - where the host gcc already targets the right arch.
+        CC="gcc"
+        for candidate in /usr/local/*-unknown-linux-gnu*/bin/*-gcc; do
+            test -x "$candidate" || continue
+            CC="$candidate"
+            break
+        done
 
-        echo "→ gcc target: $(gcc -dumpmachine 2>&1)" >&2
-        echo "→ gcc path: $(command -v gcc 2>&1)" >&2
+        echo "→ Compiling $src -> $out ($ARCH) using $CC" >&2
+        mkdir -p "$TARGET_DIR"
 
-        gcc -O2 -static -Wall -Wextra -std=gnu99 -o "$out" "$src" || {
+        "$CC" -O2 -static -Wall -Wextra -std=gnu99 -o "$out" "$src" || {
             echo "ERROR: failed to compile $src" >&2
             exit 1
         }
+
         chmod 0755 "$out"
     done
     [ "$found" -eq 1 ] || echo "→ $HELPER_DIR exists but contains no .c files, skipping" >&2
