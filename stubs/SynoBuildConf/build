@@ -38,17 +38,38 @@ if [ -d "$HELPER_DIR" ]; then
         mkdir -p "$TARGET_DIR"
 
         # Prefer a triplet-prefixed cross-compiler if this chroot has one
-        # (ARM platforms keep theirs under /usr/local/<triplet>/bin, off
-        # the default PATH); fall back to plain gcc for platforms - like
-        # kvmx64 - where the host gcc already targets the right arch.
+        # (ARM/i686 platforms keep theirs under /usr/local/<triplet>/bin,
+        # off the default PATH); fall back to plain gcc for platforms -
+        # like kvmx64 - where the host gcc already targets the right arch.
+        # NOTE: vendor field in the triplet varies by toolchain
+        # (arm-unknown-linux-gnueabi vs i686-pc-linux-gnu), so match on
+        # "-linux-gnu" rather than a specific vendor string.
         CC="gcc"
-        for candidate in /usr/local/*-unknown-linux-gnu*/bin/*-gcc; do
+        for candidate in /usr/local/*-linux-gnu*/bin/*-gcc; do
             test -x "$candidate" || continue
             CC="$candidate"
             break
         done
 
-        echo "→ Compiling $src -> $out ($ARCH) using $CC" >&2
+        # Verify $CC's reported target actually matches $ARCH before
+        # trusting it - a wrong-arch gcc will happily produce a
+        # -static binary that "succeeds" here and only fails at
+        # runtime on real hardware with Exec format error.
+        cc_machine=$("$CC" -dumpmachine 2>/dev/null) || {
+            echo "ERROR: '$CC' -dumpmachine failed" >&2
+            exit 1
+        }
+        case "$cc_machine" in
+            *"$ARCH"*) : ;;
+            *)
+                echo "ERROR: selected compiler '$CC' targets '$cc_machine'," \
+                     "which doesn't look like it matches ARCH='$ARCH'." \
+                     "Refusing to compile with a possibly wrong-arch compiler." >&2
+                exit 1
+                ;;
+        esac
+
+        echo "→ Compiling $src -> $out ($ARCH) using $CC ($cc_machine)" >&2
         mkdir -p "$TARGET_DIR"
 
         "$CC" -O2 -static -Wall -Wextra -std=gnu99 -o "$out" "$src" || {
